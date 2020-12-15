@@ -13,7 +13,8 @@ public class Soldier : MonoBehaviour
 	//list of items once items exist
 	public string name; //varaible might be changes later
 
-
+	//getting componenets
+	private Animator animator;
 
 	#region Getter/Setters
 	public float Health
@@ -21,8 +22,8 @@ public class Soldier : MonoBehaviour
 		get { return health; }
 		set
 		{
-			if (value < 0)
-				health = 0;
+			if (value <= 0)
+				health = -1;
 			else if (value > 100)
 				health = 100;
 			else
@@ -75,6 +76,12 @@ public class Soldier : MonoBehaviour
 	{
 		health = morale = fatigue = hunger = 100;
 		//set name to random from preset list unless specified otherwise
+
+		animator = GetComponent<Animator>();
+		animator.SetFloat("Health", health);
+		animator.SetFloat("Morale", morale);
+
+		PrintStatsToConsole();
 	}
 
 	// Update is called once per frame
@@ -89,18 +96,22 @@ public class Soldier : MonoBehaviour
 		//all stat changes temporary and subject to change
 		if (location == 0)	//stat changes in rest camp
 		{
-			health += 10;    //Health heals in rest camp
-			morale += 10;  //Morale improves in rest camp
-			fatigue += 10;   //fatigue reduces in rest camp
-			hunger += 10;   //hunger reduces in rest camp
+			Health += 10;    //Health heals in rest camp
+			Morale += 10;  //Morale improves in rest camp
+			Fatigue += 10;   //fatigue reduces in rest camp
+			Hunger += 10;   //hunger reduces in rest camp
 		}
 		else if (location == 1)	//stat changes on front line
 		{
-			health -= (.25f * (100 - fatigue)) + (.25f * (100 - hunger)) - 10;    //Health adjusted based on fatigue and hunger stats
-			morale -= (.25f * (100 - health)) - 10;  //Morale adjusted based on health
-			fatigue -= 5;   //to be replaced by system that checks amount of sleep
-			hunger -= 20;   //goes down each day, requires food to replenish
+			Health -= (.25f * (100 - fatigue)) + (.25f * (100 - hunger)) - 10;    //Health adjusted based on fatigue and hunger stats
+			Morale -= (.25f * (100 - health)) - 10;  //Morale adjusted based on health
+			Fatigue -= 5;   //to be replaced by system that checks amount of sleep
+			Hunger -= 20;   //goes down each day, requires food to replenish
 		}
+
+		animator.SetFloat("Health", health);
+		animator.SetFloat("Morale", morale);
+
 		PrintStatsToConsole();
 		AppearanceChange();
 	}
