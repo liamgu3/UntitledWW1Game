@@ -36,6 +36,15 @@ public class DayManager : MonoBehaviour
 		foreach (Soldier soldier in soldiers)	//updates all soldiers' stats on day change
 		{
 			soldier.StatsUpdate((int)currentLocation);
+			soldier.NightGuard = false;
+		}
+	}
+
+	public void AssignNightGuard()
+	{
+		foreach (Soldier soldier in soldiers)
+		{
+			soldier.NightGuardSelectActive = true;
 		}
 	}
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Soldier : MonoBehaviour, IDropHandler
+public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 {
 	//core soldier stats
 	private float health;
@@ -15,10 +15,15 @@ public class Soldier : MonoBehaviour, IDropHandler
 	//list of items once items exist
 	public string name; //varaible might be changes later
 
+	private bool nightGuardSelectActive;       //true when assign night guard button is pressed
+	private bool nightGuard;               //true if selected as night guard
+	private GameObject nightGuardIcon;
+
 	//getting componenets
 	//private Animator animator;
 	private Image image;
 	public Sprite[] sprites;
+	private DayManager dayManager;
 
 
 	#region Getter/Setters
@@ -74,6 +79,42 @@ public class Soldier : MonoBehaviour, IDropHandler
 				hunger = value;
 		}
 	}
+
+	public bool NightGuard
+	{
+		get { return nightGuard; }
+		set
+		{
+			if (value == true)
+			{
+				nightGuard = true;
+				nightGuardIcon.SetActive(true);
+			}
+			else
+			{
+				nightGuard = false;
+				nightGuardIcon.SetActive(false);
+			}
+		}
+	}
+
+	public bool NightGuardSelectActive
+	{
+		get { return nightGuardSelectActive; }
+		set
+		{
+			if (value == true)
+			{
+				nightGuardSelectActive = true;
+				GetComponent<Image>().color = new Color(.5f, .5f, 1.0f, 1.0f);
+			}
+			else
+			{
+				nightGuardSelectActive = false;
+				GetComponent<Image>().color = Color.white;
+			}
+		}
+	}
 	#endregion
 
 	// Start is called before the first frame update
@@ -82,9 +123,15 @@ public class Soldier : MonoBehaviour, IDropHandler
 		health = morale = fatigue = hunger = 100;
 		//set name to random from preset list unless specified otherwise
 
+		nightGuardSelectActive = false;
+		nightGuard = false;
+		nightGuardIcon = transform.Find("nightGuardIcon").gameObject;
+		nightGuardIcon.SetActive(false);
+
 		//animator = GetComponent<Animator>();
 		image = GetComponent<Image>();
 		AppearanceChange();
+		dayManager = GameObject.Find("GameManager").GetComponent<DayManager>();
 
 		PrintStatsToConsole();
 	}
@@ -110,7 +157,10 @@ public class Soldier : MonoBehaviour, IDropHandler
 		{
 			Health -= (.25f * (100 - fatigue)) + (.25f * (100 - hunger)) - 10;    //Health adjusted based on fatigue and hunger stats
 			Morale -= (.25f * (100 - health)) - 10;  //Morale adjusted based on health
-			Fatigue -= 5;   //to be replaced by system that checks amount of sleep
+			if (nightGuard)	//add artillery later
+				Fatigue -= 20;
+			else
+				Fatigue -= 5;
 			Hunger -= 20;   //goes down each day, requires food to replenish
 		}
 
@@ -163,5 +213,21 @@ public class Soldier : MonoBehaviour, IDropHandler
 	{
 		Debug.Log("OnDrop");
 		eventData.pointerDrag.GetComponent<Item>().ApplyItem(gameObject);
+	}
+
+	//performs appropriate methods when soldier is clicked
+	public void OnPointerDown(PointerEventData eventData)
+	{
+		Debug.Log("OnPointerDown");
+		if (nightGuardSelectActive)
+		{
+			Debug.Log(name + " | Night Guard Assigned");
+			foreach (Soldier soldier in dayManager.soldiers)
+			{
+				soldier.NightGuardSelectActive = false;	
+				soldier.NightGuard = false;					//sets all other soldiers to not night guard
+			}
+			NightGuard = true;	//sets this guard to night guard
+		}
 	}
 }
