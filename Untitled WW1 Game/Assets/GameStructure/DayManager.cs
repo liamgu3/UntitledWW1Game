@@ -12,6 +12,7 @@ public class DayManager : MonoBehaviour
 
 
 	public GameObject dayUI;    //text displaying day
+	private GameObject nextDayButton;
 
 	// Start is called before the first frame update
 	void Start()
@@ -19,6 +20,9 @@ public class DayManager : MonoBehaviour
 		day = 1;
 		dayUI.GetComponent<Text>().text = "Day " + day;
 		currentLocation = Location.RestCamp;
+
+		nextDayButton = GameObject.Find("NextDayButton");
+		nextDayButton.GetComponent<Button>().interactable = false;
 	}
 
     // Update is called once per frame
@@ -38,6 +42,8 @@ public class DayManager : MonoBehaviour
 			soldier.StatsUpdate((int)currentLocation);
 			soldier.NightGuard = false;
 		}
+
+		nextDayButton.GetComponent<Button>().interactable = false;	//disable next day button until all daily activites have been performed
 	}
 
 	public void AssignNightGuard()

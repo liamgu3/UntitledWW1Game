@@ -59,6 +59,7 @@ public class Item : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndD
 		Debug.Log("OnBeginDrag");
 		canvasGroup.alpha = .6f;
 		canvasGroup.blocksRaycasts = false;
+		transform.parent = canvas.gameObject.transform;
 	}
 
 	public void OnEndDrag(PointerEventData eventData)

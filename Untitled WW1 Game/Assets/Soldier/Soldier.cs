@@ -24,6 +24,7 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 	private Image image;
 	public Sprite[] sprites;
 	private DayManager dayManager;
+	private GameObject nextDayButton;
 
 
 	#region Getter/Setters
@@ -34,8 +35,8 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		{
 			if (value <= 0)
 				health = -1;
-			else if (value > 100)
-				health = 100;
+			//else if (value > 100)
+				//health = 100;
 			else
 				health = value;
 		}
@@ -47,8 +48,8 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		{
 			if (value < 0)
 				morale = 0;
-			else if (value > 100)
-				morale = 100;
+			//else if (value > 100)
+				//morale = 100;
 			else
 				morale = value;
 		}
@@ -60,8 +61,8 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		{
 			if (value < 0)
 				fatigue = 0;
-			else if (value > 100)
-				fatigue = 100;
+			//else if (value > 100)
+				//fatigue = 100;
 			else
 				fatigue = value;
 		}
@@ -73,8 +74,8 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		{
 			if (value < 0)
 				hunger = 0;
-			else if (value > 100)
-				hunger = 100;
+			//else if (value > 100)
+				//hunger = 100;
 			else
 				hunger = value;
 		}
@@ -132,6 +133,7 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		image = GetComponent<Image>();
 		AppearanceChange();
 		dayManager = GameObject.Find("GameManager").GetComponent<DayManager>();
+		nextDayButton = GameObject.Find("NextDayButton");
 
 		PrintStatsToConsole();
 	}
@@ -163,6 +165,15 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 				Fatigue -= 5;
 			Hunger -= 20;   //goes down each day, requires food to replenish
 		}
+
+		if (health > 100)
+			health = 100;
+		if (morale > 100)
+			morale = 100;
+		if (fatigue > 100)
+			fatigue = 00;
+		if (hunger > 100)
+			hunger = 100;
 
 		PrintStatsToConsole();
 		AppearanceChange();
@@ -227,7 +238,8 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 				soldier.NightGuardSelectActive = false;	
 				soldier.NightGuard = false;					//sets all other soldiers to not night guard
 			}
-			NightGuard = true;	//sets this guard to night guard
+			NightGuard = true;  //sets this guard to night guard
+			nextDayButton.GetComponent<Button>().interactable = true;
 		}
 	}
 }
