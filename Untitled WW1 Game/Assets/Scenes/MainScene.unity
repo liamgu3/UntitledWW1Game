@@ -3979,6 +3979,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1213218181}
   - component: {fileID: 1213218180}
+  - component: {fileID: 1213218182}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4018,6 +4019,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1213218182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213218179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03726584a7cf94f459a83a7300794b47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attributeList:
+  - {fileID: 7315577014621773938, guid: 8d84f376aa3339749b014545311a9cd4, type: 3}
+  - {fileID: 6901420312548695875, guid: b53c9638dbdcd6f44addf180b8d0b4fd, type: 3}
+  - {fileID: 1989516480580566208, guid: 219d6f2475be0b140b43d609a95e3377, type: 3}
+  - {fileID: 5893490461766955407, guid: 578e8efca04720648b289105ddb64781, type: 3}
+  - {fileID: 1846088051096562351, guid: ab023d4d7d74d4443812a6903ba1ddf1, type: 3}
+  - {fileID: -6151354452088129106, guid: 97033fe2ab7a1ea4bbeab62900134b9e, type: 3}
+  - {fileID: 1755658159933004508, guid: e68ab7c37653b9e499842bd445f182ff, type: 3}
+  - {fileID: 778791094371550604, guid: 3d8ad9411a147e64db74d9d09776a939, type: 3}
 --- !u!224 &1232990165 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4772490810808365626, guid: 5995d576c29dfd74dbe3afa93dd316e1,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 {
@@ -12,8 +13,15 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 	private float fatigue;
 	private float hunger;
 	//attribute variable once attribute exists
-	//list of items once items exist
-	public string name; //varaible might be changes later
+	private Item[] items;
+	private Attribute[] attributes = new Attribute[8];
+	public string name; //varaible might be changed later
+
+	//used to modify stat degredation based on attributes or events
+	private float healthModifier;
+	private float moraleModifier;
+	private float fatigueModifier;
+	private float hungerModifier;
 
 	private bool nightGuardSelectActive;       //true when assign night guard button is pressed
 	private bool nightGuard;               //true if selected as night guard
@@ -25,6 +33,7 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 	public Sprite[] sprites;
 	private DayManager dayManager;
 	private GameObject nextDayButton;
+	private AttributeList attributeList;
 
 
 	#region Getter/Setters
@@ -81,6 +90,11 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		}
 	}
 
+	public float HealthModifier { get { return healthModifier; } set { healthModifier = value; } }
+	public float MoraleModifier { get { return moraleModifier; } set { moraleModifier = value; } }
+	public float FatigueModifier { get { return fatigueModifier; } set { fatigueModifier = value; } }
+	public float HungerModifier { get { return hungerModifier; } set { hungerModifier = value; } }
+
 	public bool NightGuard
 	{
 		get { return nightGuard; }
@@ -122,7 +136,23 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 	void Start()
 	{
 		health = morale = fatigue = hunger = 100;
+		healthModifier = moraleModifier = fatigueModifier = hungerModifier = 1.0f;
 		//set name to random from preset list unless specified otherwise
+
+		//assigning soldier base stat modifier attributes
+		attributeList = GameObject.Find("GameManager").GetComponent<AttributeList>();
+		attributes[0] = attributeList.attributeList[attributeList.rng.Next(0, 8)];
+		attributes[1] = attributeList.attributeList[attributeList.rng.Next(0, 8)];
+		while (attributes[1] == attributes[0])
+		{
+			attributes[1] = attributeList.attributeList[attributeList.rng.Next(0, 8)];
+		}
+		Debug.Log(name + ": " + attributes[0].GetName() + ", " + attributes[1].GetName());
+		foreach (Attribute attribute in attributes)	//changes any appropriate stat modifiers based on attributes
+		{
+			if(attribute != null)
+				attribute.ApplyEffects(this);
+		}
 
 		nightGuardSelectActive = false;
 		nightGuard = false;
@@ -157,13 +187,13 @@ public class Soldier : MonoBehaviour, IDropHandler, IPointerDownHandler
 		}
 		else if (location == 1) //stat changes on front line
 		{
-			Health -= (.25f * (100 - fatigue)) + (.25f * (100 - hunger)) - 10;    //Health adjusted based on fatigue and hunger stats
-			Morale -= (.25f * (100 - health)) - 10;  //Morale adjusted based on health
+			Health -= ((.25f * (100 - fatigue)) + (.25f * (100 - hunger)) - 10) * healthModifier;    //Health adjusted based on fatigue and hunger stats
+			Morale -= ((.25f * (100 - health)) - 10) * moraleModifier;  //Morale adjusted based on health
 			if (nightGuard)	//add artillery later
-				Fatigue -= 20;
+				Fatigue -= 20 * fatigueModifier;
 			else
-				Fatigue -= 5;
-			Hunger -= 20;   //goes down each day, requires food to replenish
+				Fatigue -= 5 * fatigueModifier;
+			Hunger -= 20 * hungerModifier;   //goes down each day, requires food to replenish
 		}
 
 		if (health > 100)
